@@ -1,0 +1,86 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-release" }
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE")
+    }
+}
+
+//apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'war'
+
+sourceCompatibility = '1.7'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+war {
+    baseName = 'highcharts'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-release" }
+}
+
+configurations {
+    providedRuntime
+}
+
+//Project dependencies
+dependencies {
+
+    // Tiles dependencies
+    compile('jstl:jstl:1.2')
+    
+    // jackson libs
+    compile('org.codehaus.jackson:jackson-mapper-asl:1.9.0')
+    
+    compile('org.apache.tiles:tiles-template:3.0.5')
+    compile('org.apache.tiles:tiles-core:3.0.5')
+    compile('org.apache.tiles:tiles-jsp:3.0.5')
+    compile('org.apache.tiles:tiles-api:3.0.5')
+    compile('org.apache.tiles:tiles-servlet:3.0.5')
+    compile('org.apache.tiles:tiles-el:3.0.5')
+    // exclude additional dependencies to avoid crashing
+    // http://stackoverflow.com/questions/28082916/spring-mvc-4-tiles3-tiles-extras-dependency-crashes-applicaiton
+    compile('org.apache.tiles:tiles-extras:3.0.5') {
+        exclude module: 'tiles-freemarker'
+        exclude module: 'tiles-velocity'
+    }
+    
+    // Spring FrameWork
+    compile('org.springframework:spring-webmvc:4.0.6.RELEASE')
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-ws")
+    
+    // validation api
+    compile "javax.validation:validation-api:1.1.0.Final"
+    
+    // JSP
+    compile 'javax.servlet.jsp.jstl:jstl:1.2','taglibs:standard:1.1.2'
+    
+    // javax mail
+    compile 'javax.mail:mail:1.4.3'
+    compile group: 'org.springframework' , name:'spring-context-support', version:'4.1.4.RELEASE'
+    
+    // JUnit
+    compile('org.springframework:spring-test:2.5')
+    compile('org.testng:testng:6.8.8')
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+    providedRuntime 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'com.sample.highcharts.bean.main.Application'
+}
